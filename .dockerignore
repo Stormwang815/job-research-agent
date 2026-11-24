@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.venv
+.git
+.pytest_cache
+**/__pycache__
+data
+reports
+var
+dist
+桌面整理说明.md

@@ -1,0 +1,13 @@
+services:
+  job-research-agent:
+    build: .
+    ports:
+      - "127.0.0.1:8010:8010"
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./var:/app/var
+    restart: unless-stopped

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="分析岗位要求、能力差距与求职行动计划">
+  <title>职探 · 招聘岗位调研工作台</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">职</span>
+        <div><strong>职探</strong><small>JOB INTELLIGENCE</small></div>
+      </div>
+      <button class="new-task" id="new-task"><span>＋</span> 新建岗位调研</button>
+      <div class="history-heading"><span>最近调研</span><button id="refresh-history" aria-label="刷新历史">↻</button></div>
+      <nav id="history" aria-label="历史调研"><div class="history-empty">还没有调研记录</div></nav>
+      <div class="sidebar-foot">
+        <div class="privacy-icon">⌁</div>
+        <p>候选人资料保存在当前部署环境。上传前请移除身份证、住址等敏感信息。</p>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <div class="breadcrumb">岗位研究 <span>/</span> 新建任务</div>
+          <h1>招聘岗位调研</h1>
+          <p>把分散的招聘信息整理成可执行的能力提升方案。</p>
+        </div>
+        <div class="top-actions">
+          <div class="provider-pill" id="provider-pill"><i></i><span>检查服务</span></div>
+          <button class="settings-button" id="access-button" aria-label="打开服务配置"><span>⚙</span> 服务配置</button>
+        </div>
+      </header>
+
+      <div class="content-grid">
+        <section class="card brief-card" id="input-card">
+          <div class="card-heading">
+            <div class="step-number">01</div>
+            <div><h2>定义调研目标</h2><p>信息越具体，分析结果越贴近你的实际情况。</p></div>
+          </div>
+          <form id="research-form">
+            <div class="field-grid">
+              <label class="role-field">目标岗位<input name="role" value="AI Agent 开发工程师" required minlength="2"></label>
+              <label>目标地区<input name="city" value="上海/远程"></label>
+              <label>经验级别<select name="seniority"><option>不限</option><option>实习</option><option>初级</option><option>中级</option><option>高级</option></select></label>
+              <label>资料范围<select name="source"><option value="web">互联网</option><option value="hybrid">网页＋本地资料</option><option value="local">仅本地资料</option></select></label>
+            </div>
+            <label class="textarea-label">你的背景 <span>选填</span><textarea name="candidate_profile" rows="4" placeholder="例如：2年Python经验，做过FastAPI项目，正在学习RAG和工具调用"></textarea></label>
+            <label class="textarea-label">重点关注 <span>选填</span><textarea name="focus" rows="3" placeholder="例如：重点分析初级岗位、远程机会和适合写进简历的项目"></textarea></label>
+
+            <div class="document-row">
+              <div class="document-icon">↑</div>
+              <div><strong>添加岗位JD或个人资料</strong><span id="upload-status">PDF、DOCX、TXT、MD · 最大10MB</span></div>
+              <label class="file-button">选择文件<input id="document" type="file" accept=".pdf,.txt,.md,.docx"></label>
+            </div>
+
+            <div class="form-footer">
+              <label class="switch-label"><input type="checkbox" name="demo" checked><span class="switch"></span><span><b>演示模式</b><small>不调用模型，不产生费用</small></span></label>
+              <button type="submit" class="primary" id="submit">开始调研 <span>→</span></button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="card output-guide" id="output-guide">
+          <div class="card-heading compact"><div class="step-number">02</div><div><h2>你将获得</h2><p>一份有依据的岗位决策报告</p></div></div>
+          <ol class="deliverables">
+            <li><span>01</span><div><strong>岗位画像</strong><p>职责边界与典型工作场景</p></div></li>
+            <li><span>02</span><div><strong>技能矩阵</strong><p>关键能力、证据与优先级</p></div></li>
+            <li><span>03</span><div><strong>个人差距</strong><p>已有优势和需要补齐的能力</p></div></li>
+            <li><span>04</span><div><strong>8周计划</strong><p>每周目标、产出和验收标准</p></div></li>
+          </ol>
+          <div class="evidence-note"><i></i><div><strong>证据优先</strong><p>真实模式会附带来源，并区分公开事实和模型推断。</p></div></div>
+        </aside>
+      </div>
+
+      <section class="status-card hidden" id="status-panel">
+        <div class="status-icon"><span class="spinner"></span></div>
+        <div class="status-content"><div><strong id="status-title">准备中</strong><span id="percent">0%</span></div><p id="status-message">正在建立任务……</p><div class="bar"><div id="bar-fill"></div></div></div>
+      </section>
+
+      <section class="card report-card hidden" id="report-panel">
+        <div class="report-toolbar">
+          <div><span class="section-kicker">RESEARCH REPORT</span><h2 id="report-title">岗位调研报告</h2></div>
+          <div class="report-actions"><div class="metrics" id="metrics"></div><a id="download" href="#" target="_blank">Markdown ↗</a></div>
+        </div>
+        <article id="report" class="report-content"></article>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="access-dialog">
+    <div class="dialog-head"><div><span class="section-kicker">SETTINGS</span><h2>服务配置</h2></div><button id="close-settings" aria-label="关闭">×</button></div>
+    <section class="settings-section">
+      <h3>模型与搜索服务</h3><p>密钥仅提交给当前后端；已经保存的内容不会再次显示。</p>
+      <div class="provider-status"><span><i id="openai-dot"></i>OpenAI <b id="openai-status">检查中</b></span><span><i id="tavily-dot"></i>Tavily <b id="tavily-status">检查中</b></span></div>
+      <form id="provider-form">
+        <label>OpenAI API Key<div class="secret-input"><input id="openai-key" type="password" placeholder="sk-…" autocomplete="off"><button type="button" data-toggle="openai-key">显示</button></div></label>
+        <label>Tavily API Key<div class="secret-input"><input id="tavily-key" type="password" placeholder="tvly-…" autocomplete="off"><button type="button" data-toggle="tavily-key">显示</button></div></label>
+        <div class="dialog-actions"><div class="key-links"><a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer">获取OpenAI Key ↗</a><a href="https://app.tavily.com" target="_blank" rel="noreferrer">获取Tavily Key ↗</a></div><button class="primary" type="submit">保存配置</button></div><p id="provider-message"></p>
+      </form>
+    </section>
+    <section class="settings-section secondary-settings"><h3>工作台访问保护</h3><p>仅当部署者设置了 APP_ACCESS_TOKEN 时需要填写。</p><form id="access-form"><div class="inline-auth"><input id="access-token" type="password" placeholder="访问令牌" autocomplete="current-password"><button class="secondary-button" type="submit">验证</button></div><p id="access-error" class="error"></p></form></section>
+  </dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
